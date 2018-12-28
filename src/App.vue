@@ -103,10 +103,15 @@ export default {
   data () {
     return {
       loginpopshow:false,   
-      showsigninloading:false,   
+      showsigninloading:false, 
+      logintip:{
+        status:false,
+        message:"系统出错"
+      },
+      user:undefined
     }
   },
-  props:['logintip','user'],
+  props:['',''],
   methods:{
     popshow(){
       //this.loginpopshow=true;
