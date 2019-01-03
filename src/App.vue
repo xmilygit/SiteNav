@@ -1,165 +1,126 @@
 <template>
   <div id="app">
-    <div id="myContainer">
-      <div class="my-3" v-if="hiddencp">
-        <!-- our triggering (target) element -->
-        <b-btn
-          id="exPopoverReactive1"
-          :disabled="popoverShow"
-          variant="primary"
-          ref="button"
-          
-        >Reactive Content Using Slots</b-btn>
-      </div>
-      <div class="my-3">
-        <!-- our triggering (target) element -->
-        <b-btn id="button1" variant="primary" ref="button" @click="hiddencp=!hiddencp">hidden</b-btn>
-        <b-btn id="button2" variant="primary" ref="button2" @click="openpop">open</b-btn>
-        <b-btn id="button3" variant="primary" ref="button3" @click="closepop">close</b-btn>
-      </div>
+    <b-navbar toggleable="md" type="dark" variant="info">
+    <b-navbar-toggle target="nav_collapse"></b-navbar-toggle>
+    <b-navbar-brand href="#">桂林市凤集小学</b-navbar-brand>
+    <b-collapse is-nav id="nav_collapse">
+      <b-navbar-nav>
+        <b-nav-item href="#">我的成绩列表</b-nav-item>
+        <b-nav-item href="#">查看排名</b-nav-item>
+      </b-navbar-nav>
+      
+      <b-navbar-nav class="ml-auto">
+        <b-nav-form target="_blank" action="https://www.baidu.com/s?ie=utf-8&f=8&rsv_bp=1&rsv_idx=1&tn=baidu">
+          <b-form-input
+            required
+            size="sm"
+            class="mr-sm-2"
+            type="text"
+            placeholder="百度搜索"
+            name="wd"
+          />
+          <b-button size="sm" type="submit" class="my-2 my-sm-0">
+            百度一下
+          </b-button>
+          <b-button id="loginbutt" variant="secondary" size="sm" class="margin_l" v-b-modal.modalLogin :disabled="loginpopshow">登录</b-button>
+        </b-nav-form>        
+      </b-navbar-nav>
+    </b-collapse>
+  </b-navbar>
 
-      <!-- output from the popover interaction -->
-      <b-card title="Returned values:" v-if="input1Return && input2Return">
-        <p class="card-text" style="max-width:20rem;">Name:
-          <strong>{{ input1Return }}</strong>
-          <br>Color:
-          <strong>{{ input2Return }}</strong>
-        </p>
-      </b-card>
-    </div>
-    <!-- Our popover title and content render container -->
-    <!-- We use placement 'auto' so popover fits in the best spot on viewport -->
-    <!-- We specify the same container as the trigger button, so that popover is close to button -->
-    <b-popover
-    id="mypop"
-     target="exPopoverReactive1"
-               
-               
-               placement="auto"
+  <b-modal id="modalLogin"
+             ref="modal"
+             title="登录"
+             @ok="handleOk"
+             @shown="clearName"
+             hide-footer
+             no-close-on-backdrop
+             >
+      <form @submit.stop.prevent="handleSubmit">
+        <b-form-group 
+                    label="用户名："
+                    label-for="username"
+                    description="请输入用户名">
+          <b-form-input
+            id="username"
+            required
+            size="sm"
+            class="mr-sm-2"
+            type="text"
+            ref="username"
+            placeholder="用户名"
+          />
+          </b-form-group>
 
-               ref="popover"
-               @show="onShow"
-               @shown="onShown"
-               @hidden="onHidden">
-      <template slot="title">
-        <b-btn @click="onClose" class="close" aria-label="Close">
-          <span class="d-inline-block" aria-hidden="true">&times;</span>
-        </b-btn>
-        Interactive Content
-      </template>
-      <div>
-        <b-form-group label="Name" label-for="pop1"
-                      :state="input1state" horizontal class="mb-1"
-                      description="Enter your name"
-                      invalid-feedback="This field is required">
-          <b-form-input ref="input1" id="pop1" :state="input1state" size="sm" v-model="input1" />
-        </b-form-group>
-        <b-form-group label="Color" label-for="pop2"
-                      :state="input2state" horizontal class="mb-1"
-                      description="Pick a color"
-                      invalid-feedback="This field is required">
-          <b-form-select size="sm" id="pop2" :state="input2state" v-model="input2" :options="options" />
-        </b-form-group>
-        <b-alert show class="small">
-          <strong>Current Values:</strong><br>
-          Name: <strong>{{ input1 }}</strong><br>
-          Color: <strong>{{ input2 }}</strong>
-        </b-alert>
-        <b-btn @click="onClose" size="sm" variant="danger">Cancel</b-btn>
-        <b-btn @click="onOk" size="sm" variant="primary">Ok</b-btn>
-      </div>
-    </b-popover>
+          <b-form-group  
+                    label="密码"
+                    label-for="password"
+                    description="请输入密码">
+          <b-form-input
+            id="password"
+            required
+            size="sm"
+            class="mr-sm-2"
+            type="password"
+            ref="password"
+            placeholder="密码"
+          />
+          </b-form-group>
+          <b-button size="sm" type="submit" class="my-2 my-sm-0" id="loginbutton" variant="success">
+            <img
+              v-show="showsigninloading"
+              src="src/assets/loading.gif"
+              style="width:20px;height:20px;margin-right:10px;"
+            >登录
+          </b-button>
+          <b-button size="sm" variant="secondary" @click="loginpopshow=false">取消</b-button>
+          <b-button size="sm" variant="secondary" v-b-hide-modal.modalLogin>取消</b-button>
+          <b-popover
+            disabled
+            target="loginbutton"
+            :show="logintip.status"
+            @shown="logintipshow"
+            placement="bottomleft"
+          >{{logintip.message}}</b-popover>
+          <!--  -->
+      </form>
+  </b-modal>
   </div>
 </template>
 
 <script>
 export default {
-  name: "app",
-  data() {
+  name: 'app',
+  data () {
     return {
-      hiddencp: true,
-      input1: "",
-      input1state: null,
-      input2: "",
-      input2state: null,
-      options: [{ text: "- Choose 1 -", value: "" }, "Red", "Green", "Blue"],
-      input1Return: "",
-      input2Return: "",
-      popoverShow: false
-    };
-  },
-  watch: {
-    input1(val) {
-      if (val) {
-        this.input1state = true;
-      }
-    },
-    input2(val) {
-      if (val) {
-        this.input2state = true;
-      }
+      loginpopshow:false,   
+      showsigninloading:false, 
+      logintip:{
+        status:false,
+        message:"系统出错"
+      },
+      user:undefined
     }
   },
-  methods: {
-    onClose() {
-      this.popoverShow = false;
+  props:['',''],
+  methods:{
+    popshow(){
+      //this.loginpopshow=true;
     },
-    onOk() {
-      if (!this.input1) {
-        this.input1state = false;
-      }
-      if (!this.input2) {
-        this.input2state = false;
-      }
-      if (this.input1 && this.input2) {
-        this.onClose();
-        /* "Return" our popover "form" results */
-        this.input1Return = this.input1;
-        this.input2Return = this.input2;
-      }
+    pophidden(){
+      this.showsigninloading=false;
     },
-    onShow() {
-      /* This is called just before the popover is shown */
-      /* Reset our popover "form" variables */
-      this.input1 = "";
-      this.input2 = "";
-      this.input1state = null;
-      this.input2state = null;
-      this.input1Return = "";
-      this.input2Return = "";
-    },
-    onShown() {
-      /* Called just after the popover has been shown */
-      /* Transfer focus to the first input */
-      this.focusRef(this.$refs.input1);
-    },
-    onHidden() {
-      /* Called just after the popover has finished hiding */
-      /* Bring focus back to the button */
-      this.focusRef(this.$refs.button);
-    },
-    focusRef(ref) {
-      /* Some references may be a component, functional component, or plain element */
-      /* This handles that check before focusing, assuming a focus() method exists */
-      /* We do this in a double nextTick to ensure components have updated & popover positioned first */
-      this.$nextTick(() => {
-        this.$nextTick(() => {
-          (ref.$el || ref).focus();
-        });
-      });
-    },
-    openpop() {
-      this.$refs.popover.$emit('open')
-    },
-    closepop() {
-      this.$root.$emit("bv::hide::popover");
+    signin(evt){
+      evt.preventDefault();
+      this.showsigninloading=true;
     }
   }
-};
+  
+}
 </script>
 
 <style>
-.margin_l {
-  margin-left: 5px;
+.margin_l{
+  margin-left:5px;
 }
 </style>

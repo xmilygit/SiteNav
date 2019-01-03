@@ -87,7 +87,7 @@
             :show="logintip.status"
             @shown="logintipshow"
             placement="bottomleft"
-          >{{logintip.message}}</b-popover> -->
+          >{{logintip.message}}</b-popover>
           <!--  -->
         </b-form>
         <!-- <b-btn @click="onClose" size="sm" variant="danger">Cancel</b-btn>
