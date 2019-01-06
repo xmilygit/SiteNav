@@ -1,87 +1,50 @@
 <template>
   <div id="app">
-    <navbar
-      @signin="signin"
-      @signout="signout"
-      @showlinkmng="linkmngmodalshow=true"
-      :links="links"
+    <navbar @login="showloginmodal=true" @logout="signout" :user="user"></navbar>
+    <login
+      :show="showloginmodal"
+      @hidden="showloginmodal=false"
+      @login="login"
       :showsigninloading="showsigninloading"
-      :user="user"
       :logintip="logintip"
-    ></navbar>
-    <loading :title="loadbacktitle" :show="showloadingback"></loading>
-    <linkmng
-      :show="linkmngmodalshow"
       :user="user"
-      @hidden="linkmngmodalshow=false"
-      @showloading="showloading"
-    ></linkmng>
-    <div style="width:550px;height:367px;margin:20px auto;background-color:#eeeeee;">
-      <focus></focus>
-    </div>
-    
+    ></login>
+    <loading :title="loadbacktitle" :show="showloadingback"></loading>
   </div>
 </template>
 
 <script>
+import axios from 'axios'
 import navbar from "./component/navbar.vue";
+import login from "./component/login.vue";
 import loading from "./component/loading.vue";
-import linkmng from "./component/linklist.vue";
-import focus from "./component/focus.vue";
-import axios from "axios";
 export default {
   name: "app",
   data() {
     return {
+      showloginmodal: false,
       showsigninloading: false,
       logintip: {
         status: false,
-        message: "default"
+        message: "default",
       },
-      user: undefined,
-      loadbacktitle: "正在保存...",
-      showloadingback: false,
-      linkmngmodalshow: false,
-      links: []
+      user:undefined,
+      loadbacktitle:"正在保存...",
+      showloadingback:false,
     };
   },
   components: {
     navbar,
+    login,
     loading,
-    linkmng,
-    focus,
   },
+  watch: {},
   mounted() {
     this.whenrefresh();
-    this.getlinks();
   },
   methods: {
-    //获取链接
-    getlinks() {
-      let self = this;
-      this.showloading("加载数据...", true);
-      axios
-        .get("/sitenav/getlinks")
-        .then(this.getlinks_cb)
-        .catch(function(error) {
-          self.showloading();
-          self.logintip = {
-            status: true,
-            message: "系统故障：" + error.message
-          };
-        });
-    },
-    //获取链接回调
-    getlinks_cb(res) {
-      this.showloading();
-      if (res.data.error) {
-        this.showalert("加载链接失败！错误原因：" + res.data.message, "danger");
-        return;
-      }
-      this.links = res.data.linklist;
-    },
     //用户登录
-    signin(userinfo) {
+    login(userinfo) {
       let self = this;
       this.showsigninloading = true;
       axios
@@ -116,7 +79,7 @@ export default {
     },
     //当未退出刷新页面时
     whenrefresh() {
-      // console.log(sessionStorage.getItem("user"));
+      console.log(sessionStorage.getItem("user"));
       let user = JSON.parse(sessionStorage.getItem("user"));
       let self = this;
       if (user) {
@@ -150,13 +113,10 @@ export default {
       this.loadbacktitle = message;
       if (show) this.showloadingback = true;
       else this.showloadingback = false;
-    }
+    },
   }
 };
 </script>
 
 <style>
-.margin_l {
-  margin-left: 5px;
-}
 </style>

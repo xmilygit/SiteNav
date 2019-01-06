@@ -1,5 +1,5 @@
 {
-  "name": "xxx",
+  "name": "sitnav",
   "description": "A Vue.js project",
   "version": "1.0.0",
   "author": "xmilygit <xmilygame@163.com>",
@@ -11,8 +11,13 @@
   },
   "dependencies": {
     "axios": "^0.18.0",
+    "bootstrap": "^4.2.1",
     "bootstrap-vue": "^2.0.0-rc.11",
-    "vue": "^2.5.11"
+    "jquery": "^3.3.1",
+    "muse-ui": "^3.0.1",
+    "popper.js": "^1.14.6",
+    "vue": "^2.5.11",
+    "vue-loading-overlay": "^3.1.1"
   },
   "browserslist": [
     "> 1%",
