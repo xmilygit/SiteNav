@@ -30,8 +30,8 @@ import linkmng from "./component/linklist.vue";
 import focus from "./component/focus.vue";
 import axios from "axios";
 export default {
-  name: "app",
-  data() {
+  name: 'app',
+  data () {
     return {
       showsigninloading: false,
       logintip: {
@@ -152,11 +152,12 @@ export default {
       else this.showloadingback = false;
     }
   }
-};
+  
+}
 </script>
 
 <style>
-.margin_l {
-  margin-left: 5px;
+.margin_l{
+  margin-left:5px;
 }
 </style>
