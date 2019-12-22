@@ -33,6 +33,7 @@
             right
           >
             <b-dropdown-item v-show="user.info.admin" @click="$emit('showlinkmng')">管理链接</b-dropdown-item>
+            <b-dropdown-item v-show="user.info.admin" @click="$emit('changepassword')">修改密码</b-dropdown-item>
             <b-dropdown-divider v-show="user.info.admin"></b-dropdown-divider>
             <b-dropdown-item @click="$emit('signout')">退出</b-dropdown-item>
           </b-dropdown>

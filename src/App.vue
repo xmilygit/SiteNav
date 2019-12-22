@@ -4,6 +4,7 @@
       @signin="signin"
       @signout="signout"
       @showlinkmng="linkmngmodalshow=true"
+      @changepassword="changepswmodalshow=true"
       :links="links"
       :showsigninloading="showsigninloading"
       :user="user"
@@ -18,8 +19,11 @@
     ></linkmng>
     <div style="width:550px;height:367px;margin:20px auto;background-color:#eeeeee;">
       <focus></focus>
+      <changepsw
+        :show="changepswmodalshow"
+        @hidden="changepswmodalshow=false"
+      ></changepsw>
     </div>
-    
   </div>
 </template>
 
@@ -28,12 +32,14 @@ import navbar from "./component/navbar.vue";
 import loading from "./component/loading.vue";
 import linkmng from "./component/linklist.vue";
 import focus from "./component/focus.vue";
+import changepsw from "./component/changepsw.vue";
 import axios from "axios";
 export default {
-  name: 'app',
-  data () {
+  name: "app",
+  data() {
     return {
       showsigninloading: false,
+      changepswmodalshow: false,
       logintip: {
         status: false,
         message: "default"
@@ -50,6 +56,7 @@ export default {
     loading,
     linkmng,
     focus,
+    changepsw
   },
   mounted() {
     this.whenrefresh();
@@ -152,12 +159,11 @@ export default {
       else this.showloadingback = false;
     }
   }
-  
-}
+};
 </script>
 
 <style>
-.margin_l{
-  margin-left:5px;
+.margin_l {
+  margin-left: 5px;
 }
 </style>
